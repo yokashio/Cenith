@@ -1,4 +1,4 @@
-package cenith.assignment3;
+package main.java;
 
 public class Player {
     public int x;

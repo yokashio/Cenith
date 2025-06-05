@@ -1,4 +1,4 @@
-package cenith.assignment3;
+package main.java;
 
 import javax.swing.*;
 
