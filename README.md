@@ -31,6 +31,9 @@ A grid represents a 50x50 world made up of tiles with different effects which ha
 From the root directory:
 
 ```bash
+#Navigate to the Assignment3 folder
+cd .\Assignment3\
+
 # Compile
 javac -d out src/main/java/*.java
 
