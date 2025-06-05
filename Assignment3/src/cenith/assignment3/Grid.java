@@ -10,6 +10,7 @@ public class Grid {
 
     Grid() {
         Random rand = new Random();
+        //Set objective locations
         objectiveAX = rand.nextInt(GRID_SIZE);
         objectiveBX = rand.nextInt(GRID_SIZE);
         grid = generateTiles();
