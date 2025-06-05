@@ -1,4 +1,4 @@
-package cenith.assignment3;
+package main.java;
 
 public enum TileType {
     BLANK(0, -1),
