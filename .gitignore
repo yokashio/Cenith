@@ -1,5 +1,2 @@
-.vscode/*
-!.vscode/settings.json
-
-./Assignment3/bin/*
-
+Assignment3/bin/
+Assignment3/.vscode/
