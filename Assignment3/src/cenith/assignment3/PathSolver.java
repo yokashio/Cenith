@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+//Classic Dijkstras
 class PathSolver {
     private Grid grid;
     public List<Point> path = new ArrayList<>();
@@ -22,13 +23,13 @@ class PathSolver {
         PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(n -> n.priority));
         Map<String, Integer> visited = new HashMap<>();
 
-        pq.add(new Node(startX, startY, new ArrayList<>(), 200, 450));
+        pq.add(new Node(startX, startY, new ArrayList<>(), 200, 450, -650));
 
         while (!pq.isEmpty()) {
             Node node = pq.poll();
             String key = node.x + "," + node.y;
 
-            // Track best (lowest priority) visit
+            // Track best/lowest priority visit
             if (visited.containsKey(key) && visited.get(key) <= node.priority) continue;
             visited.put(key, node.priority);
 
@@ -39,13 +40,14 @@ class PathSolver {
                 return;
             }
 
+            //for each direction, calculate new values to test against for comparison
             for (int[] dir : new int[][]{{1,0},{-1,0},{0,1},{0,-1}}) {
                 int nx = node.x + dir[0], ny = node.y + dir[1];
                 if (nx < 0 || ny < 0 || nx >= Grid.GRID_SIZE || ny >= Grid.GRID_SIZE) continue;
 
                 GridSpace tile = grid.getGrid()[nx][ny];
-                int newHealth = node.health + tile.health;
-                int newMoves = node.moves + tile.move;
+                int newHealth = node.health + tile.getHealthEffect();
+                int newMoves = node.moves + tile.getMoveEffect();
 
                 if (newHealth < 0 || newMoves < 0) continue;
 
@@ -59,10 +61,6 @@ class PathSolver {
     static class Node {
         int x, y, health, moves, priority;
         List<Point> path;
-
-        Node(int x, int y, List<Point> path, int health, int moves) {
-            this(x, y, path, health, moves, -(health + moves));
-        }
 
         Node(int x, int y, List<Point> path, int health, int moves, int priority) {
             this.x = x;

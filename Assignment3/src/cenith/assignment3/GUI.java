@@ -23,7 +23,7 @@ class GUI extends JPanel {
     Color lavaColor = new Color(255, 153, 51);
     Color mudColor = new Color(139, 69, 19);
     Color objectiveColor = new Color(0, 0, 255);
-    Color pathColor = new Color(255, 51, 153);
+    Color pathColor = new Color(255, 255, 0);
 
     GUI(Grid grid, Player player, PathSolver solver, JFrame frame) {
         this.grid = grid;
@@ -32,40 +32,17 @@ class GUI extends JPanel {
         this.frame = frame;
         this.setFocusable(true);
 
+        // R to restart
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_R) {
                     App.startNewGame(frame);
-                } else if (handleMovement(e.getKeyCode())) {
+                } else if (PlayerController.handleMovement(e.getKeyCode(), player, grid)) {
                     repaint();
                 }
             }
         });
-    }
-
-    private boolean handleMovement(int keyCode) {
-        int newX = player.x;
-        int newY = player.y;
-
-        switch (keyCode) {
-            case KeyEvent.VK_LEFT -> newX = Math.max(player.x - 1, 0);
-            case KeyEvent.VK_RIGHT -> newX = Math.min(player.x + 1, Grid.GRID_SIZE - 1);
-            case KeyEvent.VK_UP -> newY = Math.max(player.y - 1, 0);
-            case KeyEvent.VK_DOWN -> newY = Math.min(player.y + 1, Grid.GRID_SIZE - 1);
-            default -> {
-                return false;
-            }
-        }
-
-        // Move to tile and apply effects
-        GridSpace tile = grid.getGrid()[newX][newY];
-        player.health += tile.health;
-        player.moves += tile.move;
-        player.x = newX;
-        player.y = newY;
-
-        return true;
     }
 
     @Override
@@ -77,26 +54,15 @@ class GUI extends JPanel {
         for (int i = 0; i < Grid.GRID_SIZE; i++) {
             for (int k = 0; k < Grid.GRID_SIZE; k++) {
                 GridSpace tile = grid.getGrid()[i][k];
-                g.setColor(switch (tile.state) {
-                    case "Blank" -> blankColor;
-                    case "Speeder" -> speederColor;
-                    case "Lava" -> lavaColor;
-                    case "Mud" -> mudColor;
-                    default -> Color.BLACK;
+                g.setColor(switch (tile.type) {
+                    case BLANK -> blankColor;
+                    case SPEEDER -> speederColor;
+                    case LAVA -> lavaColor;
+                    case MUD -> mudColor;
                 });
                 g.fillRect(i * cellSize, k * cellSize + gridPixelOffset, cellSize, cellSize);
                 g.setColor(Color.BLACK);
                 g.drawRect(i * cellSize, k * cellSize + gridPixelOffset, cellSize, cellSize);
-            }
-        }
-
-        // Draw path overlays (only if path exists)
-        List<Point> path = solver.path;
-        if (!path.isEmpty()) {
-            g.setColor(pathColor);
-            for (Point p : path) {
-                g.fillRect(p.x * cellSize + cellSize / 4, p.y * cellSize + gridPixelOffset + cellSize / 4, cellSize / 2,
-                        cellSize / 2);
             }
         }
 
@@ -116,6 +82,16 @@ class GUI extends JPanel {
                 (Grid.GRID_SIZE - 1) * cellSize + gridPixelOffset + cellSize);
         g.fillPolygon(triangleB);
 
+                // Draw path overlays if path exists
+        List<Point> path = solver.path;
+        if (!path.isEmpty()) {
+            g.setColor(pathColor);
+            for (Point p : path) {
+                g.fillRect(p.x * cellSize + cellSize / 4, p.y * cellSize + gridPixelOffset + cellSize / 4, cellSize / 2,
+                        cellSize / 2);
+            }
+        }
+
         // Draw player
         g.setColor(Color.RED);
         g.fillOval(player.x * cellSize, player.y * cellSize + gridPixelOffset, cellSize, cellSize);
@@ -125,11 +101,12 @@ class GUI extends JPanel {
         g.drawString("Health: " + player.health, 5, 20);
         g.drawString("Moves Left: " + player.moves, 5, 35);
 
+        // Restart text
         g.setColor(Color.RED);
         g.drawString("Press 'R' to Restart", 600, 20);
 
-        // "YOU DIED" if health or moves are negative
-        if (player.health < 0 || player.moves < 0) {
+        // "YOU DIED" if health or moves are negative or zero
+        if (player.health <= 0 || player.moves <= 0) {
             g.setColor(Color.RED);
             g.drawString("YOU DIED", 75, 20);
         }

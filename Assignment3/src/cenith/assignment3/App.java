@@ -15,15 +15,15 @@ public class App {
 
     static void startNewGame(JFrame frame) {
         Grid grid = new Grid();
-        //Place player at objectiveA start
+
         Player player = new Player(grid.objectiveAX, 0);
         PathSolver solver = new PathSolver(grid);
         solver.solve(grid.objectiveAX, 0, grid.objectiveBX, Grid.GRID_SIZE - 1);
 
         int guiPixelScale = 15;
-        //Set window size
         frame.setSize(Grid.GRID_SIZE * guiPixelScale, Grid.GRID_SIZE * guiPixelScale + GUI.gridPixelOffset);
 
+        // Refresh the GUI
         GUI newGui = new GUI(grid, player, solver, frame);
         frame.setContentPane(newGui);
         frame.revalidate();

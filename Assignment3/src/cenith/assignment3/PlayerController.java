@@ -1,30 +1,31 @@
 package cenith.assignment3;
 
+import java.awt.event.KeyEvent;
+
 public class PlayerController {
     public static boolean handleMovement(int keyCode, Player player, Grid grid) {
-        int newX = player.x;
-        int newY = player.y;
+        int dx = 0, dy = 0;
 
         switch (keyCode) {
-            case java.awt.event.KeyEvent.VK_LEFT -> newX = Math.max(player.x - 1, 0);
-            case java.awt.event.KeyEvent.VK_RIGHT -> newX = Math.min(player.x + 1, Grid.GRID_SIZE - 1);
-            case java.awt.event.KeyEvent.VK_UP -> newY = Math.max(player.y - 1, 0);
-            case java.awt.event.KeyEvent.VK_DOWN -> newY = Math.min(player.y + 1, Grid.GRID_SIZE - 1);
-            default -> { return false; }
+            case KeyEvent.VK_LEFT -> dx = -1;
+            case KeyEvent.VK_RIGHT -> dx = 1;
+            case KeyEvent.VK_UP -> dy = -1;
+            case KeyEvent.VK_DOWN -> dy = 1;
+            default -> { 
+                return false; // Not a movement key
+            } 
         }
 
-        // Prevent movement if no change
-        if (newX == player.x && newY == player.y) return false;
+        return move(player, grid, dx, dy);
+    }
+
+    public static boolean move(Player player, Grid grid, int dx, int dy) {
+        int newX = Math.max(0, Math.min(Grid.GRID_SIZE - 1, player.x + dx));
+        int newY = Math.max(0, Math.min(Grid.GRID_SIZE - 1, player.y + dy));
 
         GridSpace tile = grid.getGrid()[newX][newY];
-        int newHealth = player.health + tile.health;
-        int newMoves = player.moves + tile.move;
-
-        // Enforce solvability rules
-        if (newHealth < 0 || newMoves < 0) return false;
-
-        player.health = newHealth;
-        player.moves = newMoves;
+        player.health += tile.getHealthEffect();
+        player.moves += tile.getMoveEffect();
         player.x = newX;
         player.y = newY;
 

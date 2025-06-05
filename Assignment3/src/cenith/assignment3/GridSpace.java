@@ -1,29 +1,16 @@
 package cenith.assignment3;
 public class GridSpace {
-    String state;
-    int health;
-    int move;
+    public TileType type;
 
-    GridSpace(String state) {
-        this.state = state;
-        switch (state) {
-            case "Blank" -> {
-                health = 0;
-                move = -1;
-            }
-            case "Speeder" -> {
-                health = -5;
-                move = 0;
-            }
-            case "Lava" -> {
-                health = -50;
-                move = -10;
-            }
-            case "Mud" -> {
-                health = -10;
-                move = -5;
-            }
-            default -> throw new IllegalArgumentException("Invalid tile state :(");
-        }
+    public GridSpace(TileType type) {
+        this.type = type;
+    }
+
+    public int getHealthEffect() {
+        return type.healthEffect;
+    }
+
+    public int getMoveEffect() {
+        return type.moveEffect;
     }
 }
