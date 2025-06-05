@@ -32,10 +32,10 @@ From the root directory:
 
 ```bash
 # Compile
-javac -d out src/cenith/assignment3/*.java
+javac -d out src/main/java/*.java
 
 # Run
-java -cp out cenith.assignment3.App
+java -cp out main.java.App
 ```
 
 Or if using an IDE like IntelliJ or VS Code, just run App.java.
